@@ -1,1 +1,8 @@
+# Environment files with sensitive data
+.env
 
+# Storage and data directories
+windows/
+shared/
+oem/
+storage*/

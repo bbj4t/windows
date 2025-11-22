@@ -20,6 +20,12 @@ Windows inside a Docker container.
  - KVM acceleration
  - Web-based viewer
 
+> [!NOTE]
+> **New!** See [SETUP.md](SETUP.md) for additional setup guides including:
+> - Environment-based configuration with .env file
+> - Docker Desktop installation script for Windows
+> - RustDesk setup (RDP alternative with custom relay server support)
+
 ## Video 📺
 
 [![Youtube](https://img.youtube.com/vi/xhGYobuG508/0.jpg)](https://www.youtube.com/watch?v=xhGYobuG508)
@@ -49,6 +55,9 @@ services:
     restart: always
     stop_grace_period: 2m
 ```
+
+> [!TIP]
+> **Using .env for configuration:** You can use environment variables for easier configuration management. See the included `compose.yml` and `.env.example` files, or read the [environment configuration guide](SETUP.md#environment-based-configuration) for details.
 
 ##### Via Docker CLI:
 
@@ -254,6 +263,23 @@ kubectl apply -f https://raw.githubusercontent.com/dockur/windows/refs/heads/mas
   So for a better experience you can connect using any Microsoft Remote Desktop client to the IP of the container, using the username `Docker` and password `admin`.
 
   There is a RDP client for [Android](https://play.google.com/store/apps/details?id=com.microsoft.rdc.androidx) available from the Play Store and one for [iOS](https://apps.apple.com/nl/app/microsoft-remote-desktop/id714464092?l=en-GB) in the Apple Store. For Linux you can use [FreeRDP](https://www.freerdp.com/) and on Windows just type `mstsc` in the search box.
+
+### What are the alternatives to RDP for remote access?
+
+  Besides traditional RDP (port 3389), you can use **RustDesk** as an open-source alternative that offers several advantages:
+
+  - **NAT Traversal**: Connect over the internet without port forwarding or VPN
+  - **Custom Relay Servers**: Host your own relay server for complete privacy and control
+  - **Cross-Platform**: Available for Windows, macOS, Linux, iOS, and Android
+  - **Free & Open-Source**: No licensing costs or restrictions
+  - **Easy Setup**: Works out-of-the-box without complex network configuration
+
+  RustDesk is particularly useful when:
+  - You need to access your Windows container from outside your local network
+  - Traditional RDP port (3389) is blocked or unsafe to expose to the internet
+  - You want to use your own relay server instead of VPN or cloud services
+
+  See the [RustDesk setup guide](SETUP.md#rustdesk-alternative-remote-desktop-solution) for installation instructions and configuration with custom relay servers.
 
 ### How do I assign an individual IP address to the container?
 

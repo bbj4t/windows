@@ -3,17 +3,30 @@ services:
     image: dockurr/windows
     container_name: windows
     environment:
-      VERSION: "11"
+      VERSION: "${VERSION:-11}"
+      LANGUAGE: "${LANGUAGE:-English}"
+      REGION: "${REGION:-en-US}"
+      KEYBOARD: "${KEYBOARD:-en-US}"
+      USERNAME: "${USERNAME:-Docker}"
+      PASSWORD: "${PASSWORD:-admin}"
+      RAM_SIZE: "${RAM_SIZE:-4G}"
+      CPU_CORES: "${CPU_CORES:-2}"
+      DISK_SIZE: "${DISK_SIZE:-64G}"
+      DHCP: "${DHCP:-N}"
+      MANUAL: "${MANUAL:-N}"
+      DISK2_SIZE: "${DISK2_SIZE}"
+      DISK3_SIZE: "${DISK3_SIZE}"
+      ARGUMENTS: "${ARGUMENTS}"
     devices:
       - /dev/kvm
       - /dev/net/tun
     cap_add:
       - NET_ADMIN
     ports:
-      - 8006:8006
-      - 3389:3389/tcp
-      - 3389:3389/udp
+      - "${WEB_PORT:-8006}:8006"
+      - "${RDP_PORT_TCP:-3389}:3389/tcp"
+      - "${RDP_PORT_UDP:-3389}:3389/udp"
     volumes:
-      - ./windows:/storage
+      - "${STORAGE_PATH:-./windows}:/storage"
     restart: always
     stop_grace_period: 2m
