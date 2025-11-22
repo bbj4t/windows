@@ -146,16 +146,28 @@ if ($RelayServer -or $ApiServer -or $Key) {
         $config += "key = '$Key'`n"
     }
     
-    # Write or append to config file
+    # Write or update config file
+    $existingConfig = ""
     if (Test-Path $configPath) {
         # Backup existing config
         $backupPath = "$configPath.backup"
         Copy-Item $configPath $backupPath -Force
         Write-ColorOutput "Backed up existing config to $backupPath" "Gray"
+        
+        # Read existing config to preserve other settings
+        $existingConfig = Get-Content $configPath -Raw
+        
+        # Remove old relay/api/key settings if they exist
+        $existingConfig = $existingConfig -replace "(?m)^relay-server\s*=.*$", ""
+        $existingConfig = $existingConfig -replace "(?m)^api-server\s*=.*$", ""
+        $existingConfig = $existingConfig -replace "(?m)^key\s*=.*$", ""
+        $existingConfig = $existingConfig.Trim()
     }
     
     try {
-        Add-Content -Path $configPath -Value $config -Encoding UTF8
+        # Combine existing config (without duplicates) and new settings
+        $finalConfig = if ($existingConfig) { "$existingConfig`n$config" } else { $config }
+        Set-Content -Path $configPath -Value $finalConfig.Trim() -Encoding UTF8
         Write-ColorOutput "Configuration saved successfully!" "Green"
     } catch {
         Write-ColorOutput "WARNING: Failed to write configuration" "Yellow"

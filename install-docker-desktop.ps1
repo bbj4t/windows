@@ -90,9 +90,10 @@ if ($Version -eq "latest") {
 }
 
 try {
-    # Use .NET WebClient for better progress indication
-    $webClient = New-Object System.Net.WebClient
-    $webClient.DownloadFile($downloadUrl, $downloadPath)
+    # Use Invoke-WebRequest for modern TLS support
+    $ProgressPreference = 'SilentlyContinue'
+    Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath -UseBasicParsing
+    $ProgressPreference = 'Continue'
     Write-ColorOutput "Download completed successfully!" "Green"
 } catch {
     Write-ColorOutput "ERROR: Failed to download Docker Desktop" "Red"
@@ -182,7 +183,7 @@ Write-ColorOutput "4. Test with: docker run hello-world`n" "White"
 
 # Offer to restart
 $restart = Read-Host "Would you like to restart now? (Y/N)"
-if ($restart -eq "Y" -or $restart -eq "y") {
+if ($restart.ToLower() -eq "y" -or $restart.ToLower() -eq "yes") {
     Write-ColorOutput "Restarting system in 10 seconds..." "Yellow"
     shutdown /r /t 10 /c "Restarting to complete Docker Desktop installation"
 } else {
