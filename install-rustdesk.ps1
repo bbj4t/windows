@@ -157,10 +157,12 @@ if ($RelayServer -or $ApiServer -or $Key) {
         # Read existing config to preserve other settings
         $existingConfig = Get-Content $configPath -Raw
         
-        # Remove old relay/api/key settings if they exist
-        $existingConfig = $existingConfig -replace "(?m)^relay-server\s*=.*$", ""
-        $existingConfig = $existingConfig -replace "(?m)^api-server\s*=.*$", ""
-        $existingConfig = $existingConfig -replace "(?m)^key\s*=.*$", ""
+        # Remove old relay/api/key settings if they exist (match only at start of line, not in comments)
+        $existingConfig = $existingConfig -replace "(?m)^\s*relay-server\s*=.*$", ""
+        $existingConfig = $existingConfig -replace "(?m)^\s*api-server\s*=.*$", ""
+        $existingConfig = $existingConfig -replace "(?m)^\s*key\s*=.*$", ""
+        # Remove extra blank lines
+        $existingConfig = $existingConfig -replace "(?m)^\s*$\n", ""
         $existingConfig = $existingConfig.Trim()
     }
     
@@ -182,20 +184,26 @@ if ($StartAfterInstall) {
     Start-Sleep -Seconds 1
     
     try {
-        $rustdeskPath = "C:\Program Files\RustDesk\rustdesk.exe"
-        if (Test-Path $rustdeskPath) {
-            Start-Process $rustdeskPath
-            Write-ColorOutput "RustDesk started successfully!" "Green"
-        } else {
-            # Try alternate location
-            $rustdeskPath = "$env:ProgramFiles\RustDesk\rustdesk.exe"
-            if (Test-Path $rustdeskPath) {
-                Start-Process $rustdeskPath
+        # Try multiple possible installation paths
+        $possiblePaths = @(
+            "C:\Program Files\RustDesk\rustdesk.exe",
+            "$env:ProgramFiles\RustDesk\rustdesk.exe",
+            "$env:LocalAppData\RustDesk\rustdesk.exe"
+        )
+        
+        $rustdeskFound = $false
+        foreach ($path in $possiblePaths) {
+            if (Test-Path $path) {
+                Start-Process $path
                 Write-ColorOutput "RustDesk started successfully!" "Green"
-            } else {
-                Write-ColorOutput "Warning: Could not find RustDesk executable" "Yellow"
-                Write-ColorOutput "You may need to start it manually" "Yellow"
+                $rustdeskFound = $true
+                break
             }
+        }
+        
+        if (-not $rustdeskFound) {
+            Write-ColorOutput "Warning: Could not find RustDesk executable" "Yellow"
+            Write-ColorOutput "You may need to start it manually" "Yellow"
         }
     } catch {
         Write-ColorOutput "Warning: Could not start RustDesk automatically" "Yellow"

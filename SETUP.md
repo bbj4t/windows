@@ -112,8 +112,11 @@ The `install-docker-desktop.ps1` script automates the installation of Docker Des
 
 1. **Download the script** (if not already cloned):
    ```powershell
+   # From this repository
    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bbj4t/windows/main/install-docker-desktop.ps1" -OutFile "install-docker-desktop.ps1"
    ```
+   
+   > **Note:** If using a different fork or repository, replace `bbj4t/windows` with the appropriate repository path.
 
 2. **Open PowerShell as Administrator:**
    - Right-click on PowerShell

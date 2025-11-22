@@ -85,8 +85,10 @@ if ($Version -eq "latest") {
     $downloadUrl = "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
     Write-ColorOutput "`nDownloading Docker Desktop (latest version)..." "Yellow"
 } else {
+    # Note: Specific version URLs may vary. If download fails, use -Version "latest" or download manually
     $downloadUrl = "https://desktop.docker.com/win/main/amd64/$Version/Docker%20Desktop%20Installer.exe"
     Write-ColorOutput "`nDownloading Docker Desktop version $Version..." "Yellow"
+    Write-ColorOutput "Note: If download fails, version URL format may have changed" "Gray"
 }
 
 try {
